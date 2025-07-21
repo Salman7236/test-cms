@@ -11,7 +11,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Login } from "./component/Login";
 import { DashboardCards } from "./component/DashboardCards/DashboardCards";
 import ProtectedRoute from "./component/Protected/ProtectedRoute";
-import { RoleProtectedRoute } from "./component/RoleProtected/RoleProtectedRoute";
+import { LevelProtectedRoute } from "./component/LevelProtected/LevelProtectedRoute";
 import Loading from "./component/Loading/Loading";
 
 const User = React.lazy(() => import("./component/UserData/User"));
@@ -34,7 +34,7 @@ import UnauthPage from "./component/Unauthorized/UnauthPage";
 
 const App = () => {
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  const userRole = localStorage.getItem("userRole") || "user";
+  const userLevel = parseInt(localStorage.getItem("userLevel") || "999", 10);
 
   return (
     <Router>
@@ -72,78 +72,77 @@ const App = () => {
           <Route
             path="/company"
             element={
-              <RoleProtectedRoute allowedRoles={["admin"]}>
+              <LevelProtectedRoute requiredLevel={1}>
                 <Layout>
                   <Company />
                 </Layout>
-              </RoleProtectedRoute>
+              </LevelProtectedRoute>
             }
           />
 
           <Route
             path="/office"
             element={
-              <RoleProtectedRoute allowedRoles={["admin"]}>
+              <LevelProtectedRoute requiredLevel={1}>
                 <Layout>
                   <Office />
                 </Layout>
-              </RoleProtectedRoute>
+              </LevelProtectedRoute>
             }
           />
 
           <Route
             path="/allocation"
             element={
-              <RoleProtectedRoute allowedRoles={["admin", "coordinator"]}>
+              <LevelProtectedRoute requiredLevel={2}>
                 <Layout>
                   <OfficeAllocation />
                 </Layout>
-              </RoleProtectedRoute>
+              </LevelProtectedRoute>
             }
           />
 
           <Route
             path="/complain-category"
             element={
-              <RoleProtectedRoute allowedRoles={["admin"]}>
+              <LevelProtectedRoute requiredLevel={1}>
                 <Layout>
                   <ComplainCategory />
                 </Layout>
-              </RoleProtectedRoute>
+              </LevelProtectedRoute>
             }
           />
 
           <Route
             path="/complain-sub-category/:categoryId?"
             element={
-              <RoleProtectedRoute allowedRoles={["admin"]}>
+              <LevelProtectedRoute requiredLevel={1}>
                 <Layout>
                   <ComplainSubCategory />
-                  {/* <SubCategoryPage /> */}
                 </Layout>
-              </RoleProtectedRoute>
+              </LevelProtectedRoute>
             }
           />
 
           <Route
             path="/usertype"
             element={
-              <RoleProtectedRoute allowedRoles={["admin"]}>
-                <Layout>
-                  <UserType />
-                </Layout>
-              </RoleProtectedRoute>
+              // <LevelProtectedRoute requiredLevel={1}>
+              <Layout>
+                <UserType />
+              </Layout>
+              // </LevelProtectedRoute>
             }
           />
 
           <Route
             path="/users"
             element={
-              <RoleProtectedRoute allowedRoles={["admin"]}>
-                <Layout>
-                  <User />
-                </Layout>
-              </RoleProtectedRoute>
+              // <LevelProtectedRoute requiredLevel={1}>
+              <Layout>
+                <User />
+              </Layout>
+              // </LevelProtectedRoute>
             }
           />
         </Routes>

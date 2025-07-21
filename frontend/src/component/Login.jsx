@@ -57,7 +57,8 @@ export const Login = () => {
     e.preventDefault();
     setFormSuccess("");
     setFormError("");
-    let valid = true;
+    setLoading(true);
+    // let valid = true;
 
     // Validation (same as before)
     // if (!email) {
@@ -118,18 +119,56 @@ export const Login = () => {
       // }, 1000);
 
       const data = await response.json();
-      localStorage.setItem("token", data.token); // Save JWT securely (at least for now)
-
-      console.log(data);
+      // localStorage.setItem("token", data.token); // Save JWT securely (at least for now)
+      console.log("API Response:", data); // Debug log to see what's returned
 
       if (!response.ok) throw new Error(data.error || "Login failed");
 
-      // Store user data including role
+      // Validate required fields from response
+      if (!data.token) {
+        throw new Error("Authentication token not received from server");
+      }
+
+      // Handle userLevel with fallback
+      let userLevel = 999; // Default to most restrictive level
+
+      if (data.userLevel !== undefined && data.userLevel !== null) {
+        userLevel = parseInt(data.userLevel, 10);
+        if (isNaN(userLevel)) {
+          console.warn("Invalid userLevel received:", data.userLevel);
+          userLevel = 999; // Fallback to restrictive level
+        }
+      } else {
+        console.warn(
+          "userLevel not found in response, using default level 999"
+        );
+      }
+
+      // Store user data
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("userEmail", email);
-      localStorage.setItem("userRole", data.userType);
-      localStorage.setItem("userTypeId", data.userTypeId);
-      console.log(data);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userLevel", userLevel.toString());
+
+      // Store additional user data if available
+      if (data.userTypeId !== undefined && data.userTypeId !== null) {
+        localStorage.setItem("userTypeId", data.userTypeId.toString());
+      }
+
+      if (data.userType) {
+        localStorage.setItem("userType", data.userType);
+      }
+
+      if (data.userId !== undefined && data.userId !== null) {
+        localStorage.setItem("userId", data.userId.toString());
+      }
+
+      // Store any other user data that might be needed
+      if (data.userName) {
+        localStorage.setItem("userName", data.userName);
+      }
+
+      console.log("User logged in with level:", userLevel);
 
       setFormSuccess("Login successful!");
       setTimeout(() => navigate("/dashboard"), 1000);

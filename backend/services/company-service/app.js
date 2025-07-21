@@ -15,7 +15,8 @@ const PORT = process.env.PORT;
 app.use(express.json());
 app.use(cors());
 app.use(morgan("combined"));
-app.use("/companies", extractUserMiddleware, authorizeUserLevel(1), router);
+// app.use("/companies", extractUserMiddleware, authorizeUserLevel(1), router);
+app.use("/companies", router);
 
 mongoose
   .connect(process.env.MONGO_URI)
