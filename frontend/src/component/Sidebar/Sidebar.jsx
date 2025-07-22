@@ -99,40 +99,39 @@ const menuItems = [
   },
 ];
 
-// Get user level from localStorage (default to highest level number for most restricted access)
-const userLevel = parseInt(localStorage.getItem("userLevel") || "999", 10);
-
-const filteredMenuItems = menuItems
-  .filter((item) => {
-    if (item.requiredLevel === undefined) return true;
-    return userLevel <= item.requiredLevel;
-  })
-  .map((item) => {
-    if (item.subItems) {
-      return {
-        ...item,
-        subItems: item.subItems.filter((subItem) => {
-          if (subItem.requiredLevel === undefined) return true;
-          return userLevel <= subItem.requiredLevel;
-        }),
-      };
-    }
-    return item;
-  })
-  .filter((item) => {
-    if (item.subItems && item.subItems.length === 0) return false;
-    return true;
-  });
-
 const Sidebar = ({ children }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [isOpen, setIsOpen] = useState(!isMobile);
   const [openMenus, setOpenMenus] = useState({});
+  // Get user level from localStorage (default to highest level number for most restricted access)
+  const userLevel = parseInt(localStorage.getItem("userLevel") || "999", 10);
   const navigate = useNavigate();
   const location = useLocation();
 
   const drawerWidth = isOpen ? 240 : 72;
+
+  const filteredMenuItems = menuItems
+    .filter((item) => {
+      if (item.requiredLevel === undefined) return true;
+      return userLevel <= item.requiredLevel;
+    })
+    .map((item) => {
+      if (item.subItems) {
+        return {
+          ...item,
+          subItems: item.subItems.filter((subItem) => {
+            if (subItem.requiredLevel === undefined) return true;
+            return userLevel <= subItem.requiredLevel;
+          }),
+        };
+      }
+      return item;
+    })
+    .filter((item) => {
+      if (item.subItems && item.subItems.length === 0) return false;
+      return true;
+    });
 
   const handleToggle = () => {
     setIsOpen(!isOpen);

@@ -14,7 +14,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const Login = () => {
+export const Login = ({ setUserLevel, setIsLoggedIn }) => {
   const paperStyle = {
     padding: 30,
     width: 350,
@@ -170,8 +170,12 @@ export const Login = () => {
 
       console.log("User logged in with level:", userLevel);
 
-      setFormSuccess("Login successful!");
-      setTimeout(() => navigate("/dashboard"), 1000);
+      // Update App state
+      setUserLevel(userLevel);
+      setIsLoggedIn(true); //  updates App's state so redirect works
+
+      // Full page redirect to dashboard — reloads everything
+      window.location.href = "/dashboard";
     } catch (error) {
       let errorMessage = error.message;
 

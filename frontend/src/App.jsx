@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -27,21 +27,38 @@ const ComplainSubCategory = React.lazy(() =>
   import("./component/Setup/ComplainSubCategory/ComplainSubCategory")
 );
 const UserType = React.lazy(() => import("./component/UserType/UserType"));
-
-// import SubCategoryPage from './component/Setup/ComplainSubCategory/SubCategoryPage';
 import { Layout } from "./component/Layout/Layout";
 import UnauthPage from "./component/Unauthorized/UnauthPage";
 
 const App = () => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
-  const userLevel = parseInt(localStorage.getItem("userLevel") || "999", 10);
+  // --- 1. Add state ---
+  const [userLevel, setUserLevel] = useState(
+    parseInt(localStorage.getItem("userLevel") || "999", 10)
+  );
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+
+  // --- 2. Sync state to localStorage on change ---
+  useEffect(() => {
+    localStorage.setItem("userLevel", userLevel);
+    localStorage.setItem("isLoggedIn", isLoggedIn.toString());
+  }, [userLevel, isLoggedIn]);
 
   return (
     <Router>
       <Suspense fallback={<Loading />}>
         <Routes>
           {/* Public Routes */}
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/login"
+            element={
+              <Login
+                setUserLevel={setUserLevel}
+                setIsLoggedIn={setIsLoggedIn}
+              />
+            }
+          />
           <Route path="/unauthorized" element={<UnauthPage />} />
 
           {/* Redirect from root */}
@@ -61,7 +78,7 @@ const App = () => {
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Layout>
+                <Layout userLevel={userLevel}>
                   <DashboardCards />
                 </Layout>
               </ProtectedRoute>
@@ -72,8 +89,8 @@ const App = () => {
           <Route
             path="/company"
             element={
-              <LevelProtectedRoute requiredLevel={1}>
-                <Layout>
+              <LevelProtectedRoute requiredLevel={1} userLevel={userLevel}>
+                <Layout userLevel={userLevel}>
                   <Company />
                 </Layout>
               </LevelProtectedRoute>
@@ -83,8 +100,8 @@ const App = () => {
           <Route
             path="/office"
             element={
-              <LevelProtectedRoute requiredLevel={1}>
-                <Layout>
+              <LevelProtectedRoute requiredLevel={1} userLevel={userLevel}>
+                <Layout userLevel={userLevel}>
                   <Office />
                 </Layout>
               </LevelProtectedRoute>
@@ -94,8 +111,8 @@ const App = () => {
           <Route
             path="/allocation"
             element={
-              <LevelProtectedRoute requiredLevel={2}>
-                <Layout>
+              <LevelProtectedRoute requiredLevel={2} userLevel={userLevel}>
+                <Layout userLevel={userLevel}>
                   <OfficeAllocation />
                 </Layout>
               </LevelProtectedRoute>
@@ -105,8 +122,8 @@ const App = () => {
           <Route
             path="/complain-category"
             element={
-              <LevelProtectedRoute requiredLevel={1}>
-                <Layout>
+              <LevelProtectedRoute requiredLevel={1} userLevel={userLevel}>
+                <Layout userLevel={userLevel}>
                   <ComplainCategory />
                 </Layout>
               </LevelProtectedRoute>
@@ -116,8 +133,8 @@ const App = () => {
           <Route
             path="/complain-sub-category/:categoryId?"
             element={
-              <LevelProtectedRoute requiredLevel={1}>
-                <Layout>
+              <LevelProtectedRoute requiredLevel={1} userLevel={userLevel}>
+                <Layout userLevel={userLevel}>
                   <ComplainSubCategory />
                 </Layout>
               </LevelProtectedRoute>
@@ -127,22 +144,18 @@ const App = () => {
           <Route
             path="/usertype"
             element={
-              // <LevelProtectedRoute requiredLevel={1}>
-              <Layout>
+              <Layout userLevel={userLevel}>
                 <UserType />
               </Layout>
-              // </LevelProtectedRoute>
             }
           />
 
           <Route
             path="/users"
             element={
-              // <LevelProtectedRoute requiredLevel={1}>
-              <Layout>
+              <Layout userLevel={userLevel}>
                 <User />
               </Layout>
-              // </LevelProtectedRoute>
             }
           />
         </Routes>
