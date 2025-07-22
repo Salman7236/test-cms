@@ -1,21 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
-  Modal, Box, TextField, Button, Typography,
-  MenuItem, Select, FormControl, InputLabel, Grid
-} from '@mui/material';
-import { getCompany } from '../Setup/Company/Api';
-import { getUserType } from '../UserType/Api';
-import { toast, ToastContainer } from 'react-toastify';
+  Modal,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  Grid,
+} from "@mui/material";
+import { getCompany } from "../Setup/Company/Api";
+import { getUserType } from "../UserType/Api";
+import { toast, ToastContainer } from "react-toastify";
 
-const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) => {
+const UserFormModal = ({
+  open,
+  handleClose,
+  initialValues,
+  onSubmit,
+  error,
+}) => {
   const [formData, setFormData] = useState({
-    userName: '',
-    userPwd: '',
-    userExt: '',
-    userStatus: 'ACTIVE',
-    userCell: '',
-    companyId: '',
-    userTypeId: ''
+    userName: "",
+    userPwd: "",
+    userExt: "",
+    userStatus: "ACTIVE",
+    userCell: "",
+    companyId: "",
+    userTypeId: "",
   });
   const [formError, setFormError] = useState(null);
   const [companies, setCompanies] = useState([]);
@@ -31,8 +45,8 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
         const res = await getCompany();
         setCompanies(res.data.companies || []);
       } catch (err) {
-        console.error('Failed to fetch companies:', err);
-        toast.error('Failed to load companies');
+        console.error("Failed to fetch companies:", err);
+        toast.error("Failed to load companies");
       } finally {
         setLoadingCompanies(false);
       }
@@ -53,8 +67,8 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
 
         setUserRoles(res.data.userType || []);
       } catch (err) {
-        console.error('Failed to fetch user roles:', err);
-        toast.error('Failed to load user roles');
+        console.error("Failed to fetch user roles:", err);
+        toast.error("Failed to load user roles");
       } finally {
         setLoadingUserRoles(false);
       }
@@ -67,86 +81,103 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
 
   // Initialize form data
   useEffect(() => {
-    setFormData(initialValues || {
-      userName: '',
-      userPwd: '',
-      userExt: '',
-      userStatus: 'ACTIVE',
-      userCell: '',
-      companyId: '',
-      userTypeId: ''
+    setFormData({
+      userName: initialValues?.userName || "",
+      userPwd: initialValues?.userPwd || "",
+      userExt: initialValues?.userExt || "",
+      userStatus: initialValues?.userStatus || "ACTIVE",
+      userCell: initialValues?.userCell || "",
+      companyId:
+        initialValues?.companyId?._id || initialValues?.companyId || "",
+      userTypeId:
+        initialValues?.userTypeId?._id || initialValues?.userTypeId || "",
     });
-    setFormError('');
+    // setFormData(initialValues || {
+    //   userName: '',
+    //   userPwd: '',
+    //   userExt: '',
+    //   userStatus: 'ACTIVE',
+    //   userCell: '',
+    //   companyId: '',
+    //   userTypeId: ''
+    // });
+    setFormError("");
   }, [initialValues, open]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setFormError('');
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormError("");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.userName || !formData.userPwd || !formData.userExt || !formData.companyId || !formData.userTypeId) {
-      setFormError('Please fill all required fields');
+    if (
+      !formData.userName ||
+      !formData.userPwd ||
+      !formData.userExt ||
+      !formData.companyId ||
+      !formData.userTypeId
+    ) {
+      setFormError("Please fill all required fields");
       return;
     }
     onSubmit(formData);
   };
 
-
   const improvedDropdownStyles = {
     formControl: {
       minWidth: 120,
-      width: '100%',
-      marginTop: '16px',
-      marginBottom: '8px'
+      width: "100%",
+      marginTop: "16px",
+      marginBottom: "8px",
     },
 
     select: {
-      '& .MuiSelect-select': {
-        display: 'flex',
-        alignItems: 'center',
-        padding: '12px 14px'
+      "& .MuiSelect-select": {
+        display: "flex",
+        alignItems: "center",
+        padding: "12px 14px",
       },
-      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-        borderColor: '#3949ab',
-        borderWidth: '1px'
-      }
+      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: "#3949ab",
+        borderWidth: "1px",
+      },
     },
     menuItem: {
-      display: 'flex',
-      alignItems: 'center',
-      minHeight: '48px',
-      padding: '8px 16px',
-      '&:hover': {
-        backgroundColor: 'rgba(57, 73, 171, 0.08)'
-      }
+      display: "flex",
+      alignItems: "center",
+      minHeight: "48px",
+      padding: "8px 16px",
+      "&:hover": {
+        backgroundColor: "rgba(57, 73, 171, 0.08)",
+      },
     },
     loadingItem: {
-      display: 'flex',
-      justifyContent: 'center',
-      padding: '12px 16px',
-      color: 'rgba(0, 0, 0, 0.6)'
-    }
+      display: "flex",
+      justifyContent: "center",
+      padding: "12px 16px",
+      color: "rgba(0, 0, 0, 0.6)",
+    },
   };
-
 
   return (
     <Modal open={open} onClose={handleClose}>
-      <Box sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: 600,
-        bgcolor: 'background.paper',
-        boxShadow: 24,
-        p: 4,
-        borderRadius: 2
-      }}>
+      <Box
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 600,
+          bgcolor: "background.paper",
+          boxShadow: 24,
+          p: 4,
+          borderRadius: 2,
+        }}
+      >
         <Typography variant="h6" gutterBottom>
-          {initialValues?._id ? 'Edit User' : 'Add User'}
+          {initialValues?._id ? "Edit User" : "Add User"}
         </Typography>
 
         {(error || formError) && (
@@ -222,10 +253,10 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
                   id="company-label"
                   shrink={!!formData.companyId}
                   sx={{
-                    color: 'text.primary',
-                    '&.Mui-focused': {
-                      color: '#3949ab'
-                    }
+                    color: "text.primary",
+                    "&.Mui-focused": {
+                      color: "#3949ab",
+                    },
                   }}
                 >
                   Company *
@@ -243,21 +274,28 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
                     PaperProps: {
                       sx: {
                         maxHeight: 300,
-                        marginTop: '8px',
-                        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.12)'
-                      }
-                    }
+                        marginTop: "8px",
+                        boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.12)",
+                      },
+                    },
                   }}
                   renderValue={(selected) => {
-                    if (!selected) return <em style={{ color: 'rgba(0, 0, 0, 0.6)' }}>Select a company</em>;
-                    const selectedCompany = companies.find(c => c._id === selected);
+                    if (!selected)
+                      return (
+                        <em style={{ color: "rgba(0, 0, 0, 0.6)" }}>
+                          Select a company
+                        </em>
+                      );
+                    const selectedCompany = companies.find(
+                      (c) => c._id === selected
+                    );
                     return selectedCompany ? (
                       <Box>
                         <Typography variant="body1" fontWeight="500">
                           {selectedCompany.companyName}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
-                          {selectedCompany.companyAbbr || 'No abbreviation'}
+                          {selectedCompany.companyAbbr || "No abbreviation"}
                         </Typography>
                       </Box>
                     ) : null;
@@ -272,7 +310,7 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
                       No companies available
                     </MenuItem>
                   ) : (
-                    companies.map(company => (
+                    companies.map((company) => (
                       <MenuItem
                         key={company._id}
                         value={company._id}
@@ -283,7 +321,7 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
                             {company.companyName}
                           </Typography>
                           <Typography variant="caption" color="text.secondary">
-                            {company.companyAbbr || 'No abbreviation'}
+                            {company.companyAbbr || "No abbreviation"}
                           </Typography>
                         </Box>
                       </MenuItem>
@@ -292,8 +330,6 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
                 </Select>
               </FormControl>
             </Grid>
-
-
 
             {/* User Role Dropdown */}
             <Grid item xs={12} sm={6}>
@@ -308,10 +344,10 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
                   id="userrole-label"
                   shrink={!!formData.userTypeId}
                   sx={{
-                    color: 'text.primary',
-                    '&.Mui-focused': {
-                      color: '#3949ab'
-                    }
+                    color: "text.primary",
+                    "&.Mui-focused": {
+                      color: "#3949ab",
+                    },
                   }}
                 >
                   User Role *
@@ -329,14 +365,21 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
                     PaperProps: {
                       sx: {
                         maxHeight: 300,
-                        marginTop: '8px',
-                        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.12)'
-                      }
-                    }
+                        marginTop: "8px",
+                        boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.12)",
+                      },
+                    },
                   }}
                   renderValue={(selected) => {
-                    if (!selected) return <em style={{ color: 'rgba(0, 0, 0, 0.6)' }}>Select user role</em>;
-                    const selectedRole = userRoles.find(r => r._id === selected);
+                    if (!selected)
+                      return (
+                        <em style={{ color: "rgba(0, 0, 0, 0.6)" }}>
+                          Select user role
+                        </em>
+                      );
+                    const selectedRole = userRoles.find(
+                      (r) => r._id === selected
+                    );
                     return selectedRole ? (
                       <Typography fontWeight="500">
                         {selectedRole.userType}
@@ -353,7 +396,7 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
                       No roles available
                     </MenuItem>
                   ) : (
-                    userRoles.map(userRole => (
+                    userRoles.map((userRole) => (
                       <MenuItem
                         key={userRole._id}
                         value={userRole._id}
@@ -369,15 +412,13 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
               </FormControl>
             </Grid>
 
-
-
             {/* Fourth Row - Status Dropdown */}
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth margin="normal">
                 <InputLabel id="status-label">Status *</InputLabel>
                 <Select
                   name="userStatus"
-                  value={formData.userStatus || 'Active'}
+                  value={formData.userStatus || "Active"}
                   label="Status"
                   onChange={handleChange}
                 >
@@ -388,16 +429,16 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
             </Grid>
           </Grid>
 
-          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+          <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
             <Button
               onClick={handleClose}
               sx={{
                 mr: 2,
-                color: '#3949ab',
-                borderColor: '#3949ab',
-                '&:hover': {
-                  backgroundColor: 'rgba(57, 73, 171, 0.04)'
-                }
+                color: "#3949ab",
+                borderColor: "#3949ab",
+                "&:hover": {
+                  backgroundColor: "rgba(57, 73, 171, 0.04)",
+                },
               }}
               variant="outlined"
             >
@@ -407,13 +448,13 @@ const UserFormModal = ({ open, handleClose, initialValues, onSubmit, error }) =>
               type="submit"
               variant="contained"
               sx={{
-                backgroundColor: '#3949ab',
-                '&:hover': {
-                  backgroundColor: '#303f9f'
-                }
+                backgroundColor: "#3949ab",
+                "&:hover": {
+                  backgroundColor: "#303f9f",
+                },
               }}
             >
-              {initialValues?._id ? 'Update' : 'Create'}
+              {initialValues?._id ? "Update" : "Create"}
             </Button>
           </Box>
         </form>

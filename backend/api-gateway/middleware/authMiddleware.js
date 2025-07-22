@@ -1,17 +1,31 @@
 export const authMiddleware = (req, res, next) => {
-    if (!req.session.user) return res.status(401).json({ error: 'Unauthenticated' })
-    
-    const token = req.headers.authorization;
+  // Optional: log to confirm it's being hit
+  console.log("authMiddleware triggered");
 
-    if (!token) return res.status(401).json({ error: 'Unauthorized: No token provided' });
+  // Token check
+  const token = req.headers.authorization;
+  if (!token) {
+    return res.status(401).json({ error: "Unauthorized: No token provided" });
+  }
 
-    const tokens = [
-        'token',
-        'jwt',
-    ]
+  // Acceptable tokens
+  const allowedTokens = ["token", "jwt"]; // replace with real ones later
+  if (!allowedTokens.includes(token)) {
+    return res
+      .status(401)
+      .json({ error: "Unauthorized: Token not recognized" });
+  }
 
-    if (!tokens.includes(token)) return res.status(401).json({ error: 'Unauthorized: Token not recognised' })
-    console.log('Authenticated request');
+  // mock user headers for downstream services
+  req.headers["x-user-id"] = "12345";
+  req.headers["x-user-level"] = "1";
+  // req.headers['x-user-category'] = 'abc'; // only needed if userLevel === 2
 
-    next()
-}
+  // req.headers['x-user-id'] = decodedToken.userId;
+  // req.headers['x-user-level'] = decodedToken.userLevel;
+
+  // Dummy user set (simulate authentication)
+  req.user = { name: "Test User", userLevel: 1 }; // this will prevent crash on req.user
+
+  next();
+};
