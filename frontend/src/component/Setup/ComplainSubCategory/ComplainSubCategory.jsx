@@ -1,12 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Table, TableBody, TableCell, TableContainer, TableHead, TableRow, 
-  Paper, Button, CircularProgress, Typography, Box 
-} from '@mui/material';
-import { getSubCategories, deleteSubCategory } from './api'; 
-import ComplainSubForm from '../ComplainSubCategory/ComplainSubForm';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  CircularProgress,
+  Typography,
+  Box,
+} from "@mui/material";
+import { getSubCategories, deleteSubCategory } from "./Api";
+import ComplainSubForm from "../ComplainSubCategory/ComplainSubForm";
 
-const ComplainSubCategory = ({ categoryId }) => {
+// const ComplainSubCategory = ({ categoryId }) => {
+const ComplainSubCategory = () => {
+  const { categoryId } = useParams();
   const [subCategories, setSubCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,7 +31,7 @@ const ComplainSubCategory = ({ categoryId }) => {
       const response = await getSubCategories(categoryId);
       setSubCategories(response.data);
     } catch (err) {
-      setError('Failed to fetch subcategories');
+      setError("Failed to fetch subcategories");
     } finally {
       setLoading(false);
     }
@@ -30,12 +42,12 @@ const ComplainSubCategory = ({ categoryId }) => {
   }, [categoryId]);
 
   const handleDelete = async (subCategoryId) => {
-    if (window.confirm('Are you sure you want to delete this subcategory?')) {
+    if (window.confirm("Are you sure you want to delete this subcategory?")) {
       try {
         await deleteSubCategory(categoryId, subCategoryId);
         fetchSubCategories();
       } catch (err) {
-        setError('Failed to delete subcategory');
+        setError("Failed to delete subcategory");
       }
     }
   };
@@ -59,9 +71,9 @@ const ComplainSubCategory = ({ categoryId }) => {
       <Typography variant="h4" gutterBottom>
         Subcategories Report
       </Typography>
-      <Button 
-        variant="contained" 
-        onClick={() => setOpenForm(true)} 
+      <Button
+        variant="contained"
+        onClick={() => setOpenForm(true)}
         sx={{ mb: 2 }}
       >
         Add New Subcategory
@@ -79,18 +91,18 @@ const ComplainSubCategory = ({ categoryId }) => {
             {subCategories.map((subCategory) => (
               <TableRow key={subCategory._id}>
                 <TableCell>{subCategory.name}</TableCell>
-                <TableCell>{subCategory.description || 'N/A'}</TableCell>
+                <TableCell>{subCategory.description || "N/A"}</TableCell>
                 <TableCell>
-                  <Button 
-                    variant="outlined" 
-                    onClick={() => handleEdit(subCategory)} 
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleEdit(subCategory)}
                     sx={{ mr: 1 }}
                   >
                     Edit
                   </Button>
-                  <Button 
-                    variant="outlined" 
-                    color="error" 
+                  <Button
+                    variant="outlined"
+                    color="error"
                     onClick={() => handleDelete(subCategory._id)}
                   >
                     Delete
@@ -102,7 +114,7 @@ const ComplainSubCategory = ({ categoryId }) => {
         </Table>
       </TableContainer>
       {openForm && (
-        <ComplainSubForm 
+        <ComplainSubForm
           categoryId={categoryId}
           subCategory={selectedSubCategory}
           onClose={handleFormClose}
