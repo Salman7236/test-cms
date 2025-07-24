@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "concurrently": "^9.2.0"
+  },
+  "scripts": {
+    "dev": "concurrently --kill-others-on-fail --prefix-colors \"auto\" --prefix \"[{name}]\" --names \"frontend,gateway,company,complaint-cat,complaints,office,user\" \"npm run dev --prefix frontend\" \"npm run dev --prefix backend/api-gateway\" \"npm run dev --prefix backend/services/company-service\" \"npm run dev --prefix backend/services/complaint-category-service\" \"npm run dev --prefix backend/services/complaints-service\" \"npm run dev --prefix backend/services/office-service\" \"npm run dev --prefix backend/services/user-service\""
+  }
+}
