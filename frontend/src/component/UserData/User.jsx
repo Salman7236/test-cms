@@ -605,6 +605,17 @@ const User = () => {
           setOpenModal(false);
           setError("");
         }}
+        initialValues={editingUser}
+        onSubmit={handleCreate}
+        error={error}
+      />
+
+      {/* <Modal
+        open={openModal}
+        handleClose={() => {
+          setOpenModal(false);
+          setError("");
+        }}
         initialValues={
           editingUser || {
             userName: "",
@@ -614,9 +625,10 @@ const User = () => {
             userStatus: "Active",
           }
         }
+        initialValues={editingUser} // Pass null for new users, user object for editing
         onSubmit={handleCreate}
         error={error}
-      />
+      /> */}
     </Container>
   );
 };

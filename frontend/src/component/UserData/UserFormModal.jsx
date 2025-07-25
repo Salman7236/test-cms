@@ -23,11 +23,10 @@ const UserFormModal = ({
   error,
 }) => {
   const [formData, setFormData] = useState({
-    _id: "",
     userName: "",
     userPwd: "",
     userExt: "",
-    userStatus: "ACTIVE",
+    userStatus: "Active", //
     userCell: "",
     companyId: "",
     userTypeId: "",
@@ -37,8 +36,6 @@ const UserFormModal = ({
   const [userRoles, setUserRoles] = useState([]);
   const [loadingCompanies, setLoadingCompanies] = useState(false);
   const [loadingUserRoles, setLoadingUserRoles] = useState(false);
-  // const [companyId, setCompanyId] = useState("");
-  // const [userTypeId, setUserTypeId] = useState("");
 
   // Fetch companies when modal opens
   useEffect(() => {
@@ -67,7 +64,6 @@ const UserFormModal = ({
         setLoadingUserRoles(true);
         const res = await getUserType();
         console.log(res);
-
         setUserRoles(res.data.userType || []);
       } catch (err) {
         console.error("Failed to fetch user roles:", err);
@@ -80,46 +76,51 @@ const UserFormModal = ({
     if (open) {
       fetchUserRoles();
     }
-  }, [open]); // Added open as dependency
+  }, [open]);
 
-  // Initialize form data
+  // Initialize form data - Wait for data to load before setting values
   useEffect(() => {
-    if (open && initialValues) {
-      setFormData({
-        _id: initialValues._id || "",
-        userName: initialValues.userName || "",
-        userPwd: initialValues.userPwd || "",
-        userExt: initialValues.userExt || "",
-        userStatus: initialValues.userStatus || "ACTIVE",
-        userCell: initialValues.userCell || "",
-        companyId:
-          initialValues.companyId?._id || initialValues.companyId || "",
-        userTypeId:
-          initialValues.userTypeId?._id || initialValues.userTypeId || "",
-      });
+    if (open) {
+      if (initialValues && initialValues._id) {
+        // Wait for data to be loaded before setting form values to prevent "out-of-range" errors
+        const timer = setTimeout(() => {
+          setFormData({
+            _id: initialValues._id,
+            userName: initialValues.userName || "",
+            userPwd: initialValues.userPwd || "",
+            userExt: initialValues.userExt || "",
+            // Handle case variations and ensure correct capitalization
+            userStatus: (() => {
+              const status = initialValues.userStatus;
+              if (status === "active" || status === "ACTIVE") return "Active";
+              if (status === "inactive" || status === "INACTIVE")
+                return "Inactive";
+              return status || "Active";
+            })(),
+            userCell: initialValues.userCell || "",
+            companyId:
+              initialValues.companyId?._id || initialValues.companyId || "",
+            userTypeId:
+              initialValues.userTypeId?._id || initialValues.userTypeId || "",
+          });
+        }, 100); // Small delay to ensure options are loaded
+
+        return () => clearTimeout(timer);
+      } else {
+        // Creating new user
+        setFormData({
+          userName: "",
+          userPwd: "",
+          userExt: "",
+          userStatus: "Active", //
+          userCell: "",
+          companyId: "",
+          userTypeId: "",
+        });
+      }
     }
-    // setFormData({
-    //   userName: initialValues?.userName || "",
-    //   userPwd: initialValues?.userPwd || "",
-    //   userExt: initialValues?.userExt || "",
-    //   userStatus: initialValues?.userStatus || "ACTIVE",
-    //   userCell: initialValues?.userCell || "",
-    //   companyId:
-    //     initialValues?.companyId?._id || initialValues?.companyId || "",
-    //   userTypeId:
-    //     initialValues?.userTypeId?._id || initialValues?.userTypeId || "",
-    // });
-    // setFormData(initialValues || {
-    //   userName: '',
-    //   userPwd: '',
-    //   userExt: '',
-    //   userStatus: 'ACTIVE',
-    //   userCell: '',
-    //   companyId: '',
-    //   userTypeId: ''
-    // });
     setFormError("");
-  }, [initialValues, open]);
+  }, [initialValues, open, companies, userRoles]); // Added companies and userRoles as dependencies
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -131,7 +132,6 @@ const UserFormModal = ({
     e.preventDefault();
     if (
       !formData.userName ||
-      // !formData.userPwd ||
       (!formData.userPwd && !formData._id) || // allow blank password if updating
       !formData.userExt ||
       !formData.companyId ||
@@ -140,7 +140,14 @@ const UserFormModal = ({
       setFormError("Please fill all required fields");
       return;
     }
-    onSubmit(formData);
+
+    // Create a clean copy of formData without empty _id for new users
+    const submitData = { ...formData };
+    if (!submitData._id) {
+      delete submitData._id; // Remove empty _id field for new users
+    }
+
+    onSubmit(submitData);
   };
 
   const improvedDropdownStyles = {
@@ -297,6 +304,7 @@ const UserFormModal = ({
                       },
                     },
                   }}
+                  displayEmpty // Added displayEmpty to allow empty selection rendering
                   renderValue={(selected) => {
                     if (!selected)
                       return (
@@ -316,9 +324,18 @@ const UserFormModal = ({
                           {selectedCompany.companyAbbr || "No abbreviation"}
                         </Typography>
                       </Box>
-                    ) : null;
+                    ) : (
+                      // Added fallback for invalid selections
+                      <em style={{ color: "rgba(0, 0, 0, 0.6)" }}>
+                        Invalid selection
+                      </em>
+                    );
                   }}
                 >
+                  {/* Added empty option to prevent "out-of-range" errors */}
+                  <MenuItem value="">
+                    <em>Select a company</em>
+                  </MenuItem>
                   {loadingCompanies ? (
                     <MenuItem sx={improvedDropdownStyles.loadingItem}>
                       Loading companies...
@@ -388,6 +405,7 @@ const UserFormModal = ({
                       },
                     },
                   }}
+                  displayEmpty // Added displayEmpty to allow empty selection rendering
                   renderValue={(selected) => {
                     if (!selected)
                       return (
@@ -402,9 +420,18 @@ const UserFormModal = ({
                       <Typography fontWeight="500">
                         {selectedRole.userType}
                       </Typography>
-                    ) : null;
+                    ) : (
+                      // Added fallback for invalid selections
+                      <em style={{ color: "rgba(0, 0, 0, 0.6)" }}>
+                        Invalid selection
+                      </em>
+                    );
                   }}
                 >
+                  {/* Added empty option to prevent "out-of-range" errors */}
+                  <MenuItem value="">
+                    <em>Select user role</em>
+                  </MenuItem>
                   {loadingUserRoles ? (
                     <MenuItem sx={improvedDropdownStyles.loadingItem}>
                       Loading user roles...
@@ -436,7 +463,7 @@ const UserFormModal = ({
                 <InputLabel id="status-label">Status *</InputLabel>
                 <Select
                   name="userStatus"
-                  value={formData.userStatus || "Active"}
+                  value={formData.userStatus} //
                   label="Status"
                   onChange={handleChange}
                 >
