@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   Box,
@@ -8,28 +8,34 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
-} from '@mui/material';
-import { getCompany } from '../Company/Api';
+  MenuItem,
+} from "@mui/material";
+import { getCompany } from "../Company/Api";
 
 const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
+  bgcolor: "background.paper",
   boxShadow: 24,
   p: 4,
-  borderRadius: 2
+  borderRadius: 2,
 };
 
-const OfficeModalForm = ({ open, handleClose, initialValues, onSubmit, error }) => {
+const OfficeModalForm = ({
+  open,
+  handleClose,
+  initialValues,
+  onSubmit,
+  error,
+}) => {
   const [formData, setFormData] = useState({
-    officeNo: '',
-    floorNo: '1',
-    officeStatus: 'ACTIVE',
-    companyId: ''
+    officeNo: "",
+    floorNo: "1",
+    officeStatus: "ACTIVE",
+    companyId: "",
   });
   const [formError, setFormError] = useState(null);
   const [companies, setCompanies] = useState([]);
@@ -38,17 +44,17 @@ const OfficeModalForm = ({ open, handleClose, initialValues, onSubmit, error }) 
   useEffect(() => {
     if (initialValues) {
       setFormData({
-        officeNo: initialValues.officeNo || '',
-        floorNo: initialValues.floorNo || 'First Floor',
-        officeStatus: initialValues.officeStatus || 'ACTIVE',
-        companyId: initialValues.companyId || ''
+        officeNo: initialValues.officeNo || "",
+        floorNo: initialValues.floorNo || "First Floor",
+        officeStatus: initialValues.officeStatus || "ACTIVE",
+        companyId: initialValues.companyId || "",
       });
     } else {
       setFormData({
-        officeNo: '',
-        floorNo: 'First Floor',
-        officeStatus: 'ACTIVE',
-        companyId: ''
+        officeNo: "",
+        floorNo: "First Floor",
+        officeStatus: "ACTIVE",
+        companyId: "",
       });
     }
   }, [initialValues, open]);
@@ -59,8 +65,8 @@ const OfficeModalForm = ({ open, handleClose, initialValues, onSubmit, error }) 
       const response = await getCompany();
       setCompanies(response.data.companies || response.data || []);
     } catch (error) {
-      console.error('Error fetching companies:', error);
-      setFormError('Failed to load companies');
+      console.error("Error fetching companies:", error);
+      setFormError("Failed to load companies");
     } finally {
       setLoadingCompanies(false);
     }
@@ -74,35 +80,34 @@ const OfficeModalForm = ({ open, handleClose, initialValues, onSubmit, error }) 
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    setFormError('');
+    setFormError("");
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    
     if (!formData.officeNo) {
-      setFormError('Office number is required');
+      setFormError("Office number is required");
       return;
     }
 
     if (!formData.companyId) {
-      setFormError('Please select a company');
+      setFormError("Please select a company");
       return;
     }
 
-    onSubmit(formData);
+    onSubmit({ ...formData, _id: initialValues?._id });
   };
 
   return (
     <Modal open={open} onClose={handleClose}>
       <Box sx={style}>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          {initialValues?._id ? 'Edit Office' : 'Create New Office'}
+          {initialValues?._id ? "Edit Office" : "Create New Office"}
         </Typography>
 
         {(error || formError) && (
@@ -112,7 +117,6 @@ const OfficeModalForm = ({ open, handleClose, initialValues, onSubmit, error }) 
         )}
 
         <form onSubmit={handleSubmit}>
-
           <TextField
             fullWidth
             label="Office Number"
@@ -136,7 +140,7 @@ const OfficeModalForm = ({ open, handleClose, initialValues, onSubmit, error }) 
           <FormControl fullWidth margin="normal" required>
             <InputLabel>Floor No</InputLabel>
             <Select
-              name="floorNo" 
+              name="floorNo"
               value={formData.floorNo}
               label="Floor Number"
               onChange={handleChange}
@@ -169,9 +173,9 @@ const OfficeModalForm = ({ open, handleClose, initialValues, onSubmit, error }) 
               {loadingCompanies ? (
                 <MenuItem disabled>Loading companies...</MenuItem>
               ) : (
-                companies.map(company => (
+                companies.map((company) => (
                   <MenuItem key={company._id} value={company._id}>
-                    {company.companyName} ({company.companyAbbr || 'N/A'})
+                    {company.companyName} ({company.companyAbbr || "N/A"})
                   </MenuItem>
                 ))
               )}
@@ -191,16 +195,16 @@ const OfficeModalForm = ({ open, handleClose, initialValues, onSubmit, error }) 
             </Select>
           </FormControl>
 
-          <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-end' }}>
+          <Box sx={{ mt: 3, display: "flex", justifyContent: "flex-end" }}>
             <Button
               onClick={handleClose}
               sx={{
                 mr: 2,
-                color: '#3949ab',
-                borderColor: '#3949ab',
-                '&:hover': {
-                  backgroundColor: 'rgba(57, 73, 171, 0.04)'
-                }
+                color: "#3949ab",
+                borderColor: "#3949ab",
+                "&:hover": {
+                  backgroundColor: "rgba(57, 73, 171, 0.04)",
+                },
               }}
               variant="outlined"
             >
@@ -210,13 +214,13 @@ const OfficeModalForm = ({ open, handleClose, initialValues, onSubmit, error }) 
               type="submit"
               variant="contained"
               sx={{
-                backgroundColor: '#3949ab',
-                '&:hover': {
-                  backgroundColor: '#303f9f'
-                }
+                backgroundColor: "#3949ab",
+                "&:hover": {
+                  backgroundColor: "#303f9f",
+                },
               }}
             >
-              {initialValues?._id ? 'Update' : 'Create'}
+              {initialValues?._id ? "Update" : "Create"}
             </Button>
           </Box>
         </form>
