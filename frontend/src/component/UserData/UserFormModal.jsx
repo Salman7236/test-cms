@@ -23,6 +23,7 @@ const UserFormModal = ({
   error,
 }) => {
   const [formData, setFormData] = useState({
+    _id: "",
     userName: "",
     userPwd: "",
     userExt: "",
@@ -36,6 +37,8 @@ const UserFormModal = ({
   const [userRoles, setUserRoles] = useState([]);
   const [loadingCompanies, setLoadingCompanies] = useState(false);
   const [loadingUserRoles, setLoadingUserRoles] = useState(false);
+  // const [companyId, setCompanyId] = useState("");
+  // const [userTypeId, setUserTypeId] = useState("");
 
   // Fetch companies when modal opens
   useEffect(() => {
@@ -81,17 +84,31 @@ const UserFormModal = ({
 
   // Initialize form data
   useEffect(() => {
-    setFormData({
-      userName: initialValues?.userName || "",
-      userPwd: initialValues?.userPwd || "",
-      userExt: initialValues?.userExt || "",
-      userStatus: initialValues?.userStatus || "ACTIVE",
-      userCell: initialValues?.userCell || "",
-      companyId:
-        initialValues?.companyId?._id || initialValues?.companyId || "",
-      userTypeId:
-        initialValues?.userTypeId?._id || initialValues?.userTypeId || "",
-    });
+    if (open && initialValues) {
+      setFormData({
+        _id: initialValues._id || "",
+        userName: initialValues.userName || "",
+        userPwd: initialValues.userPwd || "",
+        userExt: initialValues.userExt || "",
+        userStatus: initialValues.userStatus || "ACTIVE",
+        userCell: initialValues.userCell || "",
+        companyId:
+          initialValues.companyId?._id || initialValues.companyId || "",
+        userTypeId:
+          initialValues.userTypeId?._id || initialValues.userTypeId || "",
+      });
+    }
+    // setFormData({
+    //   userName: initialValues?.userName || "",
+    //   userPwd: initialValues?.userPwd || "",
+    //   userExt: initialValues?.userExt || "",
+    //   userStatus: initialValues?.userStatus || "ACTIVE",
+    //   userCell: initialValues?.userCell || "",
+    //   companyId:
+    //     initialValues?.companyId?._id || initialValues?.companyId || "",
+    //   userTypeId:
+    //     initialValues?.userTypeId?._id || initialValues?.userTypeId || "",
+    // });
     // setFormData(initialValues || {
     //   userName: '',
     //   userPwd: '',
@@ -114,7 +131,8 @@ const UserFormModal = ({
     e.preventDefault();
     if (
       !formData.userName ||
-      !formData.userPwd ||
+      // !formData.userPwd ||
+      (!formData.userPwd && !formData._id) || // allow blank password if updating
       !formData.userExt ||
       !formData.companyId ||
       !formData.userTypeId
@@ -268,7 +286,7 @@ const UserFormModal = ({
                   onChange={handleChange}
                   label="Company *"
                   required
-                  disabled={loadingCompanies}
+                  disabled={loadingCompanies || companies.length === 0}
                   sx={improvedDropdownStyles.select}
                   MenuProps={{
                     PaperProps: {
@@ -338,7 +356,7 @@ const UserFormModal = ({
                 margin="normal"
                 variant="outlined"
                 sx={improvedDropdownStyles.formControl}
-                disabled={loadingUserRoles}
+                disabled={loadingUserRoles || userRoles.length === 0}
               >
                 <InputLabel
                   id="userrole-label"

@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { getCompany } from "../Setup/Company/Api";
+import { getUserType } from "../UserType/Api";
 import {
   Paper,
   Table,
@@ -40,6 +42,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const User = () => {
   const [users, setUsers] = useState([]);
+  // const [userType, setUserType] = useState([]);
+  // const [company, setCompany] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [error, setError] = useState("");
@@ -53,11 +57,18 @@ const User = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await getUsers();
-      const usersArray = res.data.users;
-      setUsers(usersArray);
+
+      const [userRes] = await Promise.all([
+        getUsers(),
+        getCompany(),
+        getUserType(),
+      ]);
+
+      setUsers(userRes.data.users);
+      // setCompany(companyRes.data.companies || companyRes.data); // adjust based on API response
+      // setUserType(userTypeRes.data.userTypes || userTypeRes.data); // adjust based on API response
     } catch (error) {
-      console.error("Failed to fetch users:", error);
+      console.error("Failed to fetch users or related data:", error);
     } finally {
       setLoading(false);
     }
@@ -74,6 +85,9 @@ const User = () => {
   const handleCreate = async (values) => {
     try {
       setError("");
+      console.log("This is ID of user");
+
+      console.log(values._id);
       if (values._id) {
         await updateUser(values._id, values);
         toast.success("User updated successfully!");
@@ -526,6 +540,10 @@ const User = () => {
                                   userExt: user.userExt,
                                   userCell: user.userCell,
                                   userStatus: user.userStatus,
+                                  companyId:
+                                    user.companyId?._id || user.companyId,
+                                  userTypeId:
+                                    user.userTypeId?._id || user.userTypeId,
                                 });
                                 setOpenModal(true);
                               }}

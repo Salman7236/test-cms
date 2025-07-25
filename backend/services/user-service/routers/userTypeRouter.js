@@ -7,8 +7,8 @@ import { deleteUserTypeController } from "../controllers/userTypeControllers/del
 
 export const userTypeRouter = Router();
 
-userTypeRouter.get('/', getAllUserTypeController)
-userTypeRouter.post('/register', registerUserTypeController)
-userTypeRouter.get('/:id', getOneUserTypeController)
-userTypeRouter.patch('/:id', patchUserTypeController)
-userTypeRouter.delete('/:id', deleteUserTypeController)
+userTypeRouter.get("/", getAllUserTypeController);
+userTypeRouter.post("/register", registerUserTypeController);
+userTypeRouter.get("/:id", getOneUserTypeController);
+userTypeRouter.patch("/:id", patchUserTypeController);
+userTypeRouter.delete("/:id", deleteUserTypeController);

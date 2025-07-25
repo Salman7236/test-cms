@@ -7,8 +7,8 @@ import { deleteUserController } from "../controllers/userControllers/deleteUserC
 
 export const usersRouter = Router();
 
-usersRouter.get('/',  getAllUserController)
-usersRouter.post('/register', registerUserController)
-usersRouter.get('/:id', getOneUserController)
-usersRouter.patch('/:id', patchUserController)
-usersRouter.delete('/:id', deleteUserController)
+usersRouter.get("/", getAllUserController);
+usersRouter.post("/register", registerUserController);
+usersRouter.get("/:id", getOneUserController);
+usersRouter.patch("/:id", patchUserController);
+usersRouter.delete("/:id", deleteUserController);
