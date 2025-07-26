@@ -18,8 +18,8 @@ app.use(express.json())
 app.use(cors())
 app.use(morgan("combined"))
 app.use('/complaint-categories', extractUserMiddleware, authorizeUserLevel(1), compCtgryRouter)
-app.use('/subcat-complete', extractUserMiddleware, authorizeUserLevel(1), getCompleteSubCtgry)
-app.use('/types-complete', extractUserMiddleware, authorizeUserLevel(1), getCompleteType)
+app.get('/subcat-complete', extractUserMiddleware, authorizeUserLevel(1), getCompleteSubCtgry)
+app.get('/types-complete', extractUserMiddleware, authorizeUserLevel(1), getCompleteType)
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
