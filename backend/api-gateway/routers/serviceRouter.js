@@ -76,6 +76,16 @@ serviceRouter.use(
   createProxy(process.env.COMPLAINT_CATEGORY_SERVER)
 );
 serviceRouter.use(
+  "/subcat-complete",
+  authMiddleware,
+  createProxy(process.env.COMPLAINT_CATEGORY_SERVER)
+);
+serviceRouter.use(
+  "/types-complete",
+  authMiddleware,
+  createProxy(process.env.COMPLAINT_CATEGORY_SERVER)
+);
+serviceRouter.use(
   "/complaints",
   authMiddleware,
   createProxy(process.env.COMPLAINT_SERVER)
