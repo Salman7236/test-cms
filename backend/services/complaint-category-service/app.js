@@ -1,11 +1,13 @@
 import mongoose from "mongoose"
 import { config as dotenvConfig } from "dotenv"
-import express from "express"
+import express, { application } from "express"
 import cors from "cors"
 import morgan from "morgan"
 import { compCtgryRouter } from "./routers/compCtgryRouter.js"
 import { extractUserMiddleware } from "../../shared/middleware/extractUserMiddleware.js"
 import { authorizeUserLevel } from "../../shared/auth/authorizeUserLevel.js"
+import { getCompleteSubCtgry } from "./controllers/getCompleteControllers/getCompleteSubCtrgry.js"
+import { getCompleteType } from "./controllers/getCompleteControllers/getCompleteType.js"
 
 dotenvConfig()
 
@@ -16,6 +18,8 @@ app.use(express.json())
 app.use(cors())
 app.use(morgan("combined"))
 app.use('/complaint-categories', extractUserMiddleware, authorizeUserLevel(1), compCtgryRouter)
+app.use('/subcat-complete', extractUserMiddleware, authorizeUserLevel(1), getCompleteSubCtgry)
+app.use('/types-complete', extractUserMiddleware, authorizeUserLevel(1), getCompleteType)
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
